@@ -3,8 +3,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.models import User
 
-from .forms import IssueForm, IssueUpdateForm
-from .models import Issue, IssueUpdate
+from .forms import IssueForm, IssueUpdateForm, AdminIssueUpdateForm, CategoryForm, LocationForm
+from .models import Issue, IssueUpdate, Category, Location
+from accounts.forms import AdminUserForm
+from django.db.models import Count, Q
 
 CATEGORY_SPECIALIZATION_MAP = {
     'Electrical': 'electrical',
@@ -19,9 +21,11 @@ CATEGORY_SPECIALIZATION_MAP = {
 
 @login_required
 def issue_list(request):
-
     if request.user.role == 'maintenance':
         return redirect('maintenance_dashboard')
+
+    if request.user.role == 'admin':
+        return redirect('admin_dashboard')
 
     issues = Issue.objects.filter(
         reporter=request.user
@@ -35,6 +39,12 @@ def issue_list(request):
 
 @login_required
 def report_issue(request):
+    if request.user.role != 'student':
+        if request.user.role == 'maintenance':
+            return redirect('maintenance_dashboard')
+
+        if request.user.role == 'admin':
+            return redirect('admin_dashboard')
     if request.method == 'POST':
         form = IssueForm(request.POST, request.FILES)
 
@@ -76,11 +86,28 @@ def report_issue(request):
 
 @login_required
 def issue_detail(request, pk):
-    issue = get_object_or_404(
-        Issue,
-        pk=pk,
-        reporter=request.user
-    )
+    if request.user.role == 'admin':
+        return redirect(
+            'admin_issue_detail',
+            pk=pk
+        )
+
+    if request.user.role == 'student':
+        issue = get_object_or_404(
+            Issue,
+            pk=pk,
+            reporter=request.user
+        )
+
+    elif request.user.role == 'maintenance':
+        issue = get_object_or_404(
+            Issue,
+            pk=pk,
+            assigned_to=request.user
+        )
+
+    else:
+        return redirect('issue_list')
 
     updates = issue.updates.select_related(
         'updated_by'
@@ -155,4 +182,386 @@ def maintenance_update_issue(request, pk):
             'issue': issue,
             'form': form,
         }
+    )
+@login_required
+def admin_dashboard(request):
+    if request.user.role != 'admin':
+        return redirect('issue_list')
+
+    total_issues = Issue.objects.count()
+
+    open_issues = Issue.objects.filter(
+        status__in=['reported', 'reviewed', 'assigned']
+    ).count()
+
+    in_progress_issues = Issue.objects.filter(
+        status='in_progress'
+    ).count()
+
+    resolved_issues = Issue.objects.filter(
+        status='resolved'
+    ).count()
+
+    closed_issues = Issue.objects.filter(
+        status='closed'
+    ).count()
+
+    unassigned_issues = Issue.objects.filter(
+        assigned_to__isnull=True
+    ).count()
+
+    recent_issues = Issue.objects.select_related(
+        'category',
+        'location',
+        'reporter',
+        'assigned_to'
+    ).order_by('-created_at')[:5]
+
+    context = {
+        'total_issues': total_issues,
+        'open_issues': open_issues,
+        'in_progress_issues': in_progress_issues,
+        'resolved_issues': resolved_issues,
+        'closed_issues': closed_issues,
+        'unassigned_issues': unassigned_issues,
+        'recent_issues': recent_issues,
+    }
+
+    return render(
+        request,
+        'admin/dashboard.html',
+        context
+    )
+
+@login_required
+def admin_issues(request):
+    if request.user.role != 'admin':
+        return redirect('issue_list')
+
+    issues = Issue.objects.select_related(
+        'category',
+        'location',
+        'reporter',
+        'assigned_to'
+    ).order_by('-created_at')
+
+    return render(
+        request,
+        'admin/issues.html',
+        {
+            'issues': issues,
+        }
+    )
+@login_required
+def admin_issue_detail(request, pk):
+    if request.user.role != 'admin':
+        return redirect('issue_list')
+
+    issue = get_object_or_404(
+        Issue.objects.select_related(
+            'category',
+            'location',
+            'reporter',
+            'assigned_to'
+        ),
+        pk=pk
+    )
+
+    if request.method == 'POST':
+        form = AdminIssueUpdateForm(
+            request.POST,
+            instance=issue
+        )
+
+        if form.is_valid():
+            old_status = issue.status
+            old_assigned_to = issue.assigned_to
+
+            issue = form.save()
+
+            # Status changed
+            if old_status != issue.status:
+                IssueUpdate.objects.create(
+                    issue=issue,
+                    updated_by=request.user,
+                    status=issue.status,
+                    comment=(
+                        f'Admin changed status from '
+                        f'{old_status} to {issue.status}.'
+                    )
+                )
+
+            # Assignment changed
+            if old_assigned_to != issue.assigned_to:
+                old_name = (
+                    old_assigned_to.username
+                    if old_assigned_to
+                    else 'Unassigned'
+                )
+
+                new_name = (
+                    issue.assigned_to.username
+                    if issue.assigned_to
+                    else 'Unassigned'
+                )
+
+                IssueUpdate.objects.create(
+                    issue=issue,
+                    updated_by=request.user,
+                    status=issue.status,
+                    comment=(
+                        f'Issue reassigned from '
+                        f'{old_name} to {new_name}.'
+                    )
+                )
+
+            return redirect(
+                'admin_issue_detail',
+                pk=issue.pk
+            )
+
+    else:
+        form = AdminIssueUpdateForm(
+            instance=issue
+        )
+
+    updates = issue.updates.select_related(
+        'updated_by'
+    ).order_by('created_at')
+
+    return render(
+        request,
+        'admin/issue_detail.html',
+        {
+            'issue': issue,
+            'updates': updates,
+            'form': form,
+        }
+    )
+
+@login_required
+def admin_users(request):
+    if request.user.role != 'admin':
+        return redirect('issue_list')
+
+    if request.method == 'POST':
+        form = AdminUserForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('admin_users')
+
+    else:
+        form = AdminUserForm()
+
+    users = User.objects.all().order_by(
+        'role',
+        'username'
+    )
+
+    return render(
+        request,
+        'admin/users.html',
+        {
+            'users': users,
+            'form': form,
+        }
+    )
+
+@login_required
+def admin_maintenance(request):
+    if request.user.role != 'admin':
+        return redirect('issue_list')
+
+    maintenance_users = User.objects.filter(
+        role='maintenance'
+    ).prefetch_related(
+        'assigned_issues'
+    ).order_by(
+        'specialization',
+        'username'
+    )
+
+    return render(
+        request,
+        'admin/maintenance.html',
+        {
+            'maintenance_users': maintenance_users,
+        }
+    )
+
+@login_required
+def admin_categories(request):
+    if request.user.role != 'admin':
+        return redirect('issue_list')
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('admin_categories')
+    else:
+        form = CategoryForm()
+
+    categories = Category.objects.prefetch_related(
+        'issues'
+    ).order_by('name')
+
+    return render(
+        request,
+        'admin/categories.html',
+        {
+            'categories': categories,
+            'form': form,
+        }
+    )
+
+@login_required
+def admin_locations(request):
+    if request.user.role != 'admin':
+        return redirect('issue_list')
+
+    if request.method == 'POST':
+        form = LocationForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('admin_locations')
+    else:
+        form = LocationForm()
+
+    locations = Location.objects.prefetch_related(
+        'issues'
+    ).order_by(
+        'block',
+        'building',
+        'room'
+    )
+
+    return render(
+        request,
+        'admin/locations.html',
+        {
+            'locations': locations,
+            'form': form,
+        }
+    )
+
+@login_required
+def admin_reports(request):
+    if request.user.role != 'admin':
+        return redirect('issue_list')
+
+    total_issues = Issue.objects.count()
+
+    open_issues = Issue.objects.filter(
+        status__in=['reported', 'reviewed', 'assigned']
+    ).count()
+
+    in_progress_issues = Issue.objects.filter(
+        status='in_progress'
+    ).count()
+
+    resolved_issues = Issue.objects.filter(
+        status='resolved'
+    ).count()
+
+    # -------------------------
+    # Issues by Category
+    # -------------------------
+
+    category_data = Category.objects.annotate(
+        issue_count=Count('issues')
+    ).order_by('-issue_count')
+
+    category_report = []
+
+    for category in category_data:
+        percentage = (
+            (category.issue_count / total_issues) * 100
+            if total_issues > 0
+            else 0
+        )
+
+        category_report.append({
+            'name': category.name,
+            'count': category.issue_count,
+            'percentage': round(percentage, 1),
+        })
+        
+        category_report = []
+
+    for category in category_data:
+        if total_issues > 0:
+            percentage = round(
+                (category.issue_count * 100) / total_issues,
+                1
+            )
+        else:
+            percentage = 0
+
+        category_report.append({
+            'name': category.name,
+            'count': category.issue_count,
+            'percentage': percentage,
+        })
+
+    # -------------------------
+    # Issues by Priority
+    # -------------------------
+
+    priority_data = Issue.objects.values(
+        'priority'
+    ).annotate(
+        issue_count=Count('id')
+    ).order_by('-issue_count')
+
+    priority_report = []
+
+    priority_names = dict(Issue.PRIORITY_CHOICES)
+
+    for item in priority_data:
+        priority_report.append({
+            'name': priority_names.get(
+                item['priority'],
+                item['priority']
+            ),
+            'count': item['issue_count'],
+        })
+
+    # -------------------------
+    # Issues by Location
+    # -------------------------
+
+    location_data = Location.objects.annotate(
+        issue_count=Count('issues')
+    ).order_by('-issue_count')
+
+    location_report = []
+
+    for location in location_data:
+        location_report.append({
+            'location': str(location),
+            'block': location.block,
+            'building': location.building,
+            'room': location.room,
+            'count': location.issue_count,
+        })
+
+    context = {
+        'total_issues': total_issues,
+        'open_issues': open_issues,
+        'in_progress_issues': in_progress_issues,
+        'resolved_issues': resolved_issues,
+        'category_report': category_report,
+        'priority_report': priority_report,
+        'location_report': location_report,
+    }
+
+    return render(
+        request,
+        'admin/reports.html',
+        context
     )

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Campus Fix - Categories</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* =========================
+           GLOBAL
+        ========================= */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+
+            width: 250px;
+            height: 100vh;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            background: #111827;
+            color: white;
+
+            padding: 25px 18px;
+
+            overflow-y: auto;
+        }
+
+
+        .brand {
+
+            font-size: 24px;
+            font-weight: bold;
+
+            margin-bottom: 35px;
+        }
+
+
+        .brand span {
+            color: #4f8cff;
+        }
+
+
+        .menu-title {
+
+            font-size: 12px;
+            color: #9ca3af;
+
+            text-transform: uppercase;
+
+            margin: 20px 12px 10px;
+        }
+
+
+        .sidebar a {
+
+            display: block;
+
+            color: #d1d5db;
+
+            text-decoration: none;
+
+            padding: 12px 14px;
+
+            margin-bottom: 5px;
+
+            border-radius: 8px;
+
+            transition: 0.2s;
+        }
+
+
+        .sidebar a:hover {
+
+            background: #1f2937;
+            color: white;
+        }
+
+
+        .sidebar .active {
+
+            background: #2563eb;
+            color: white;
+        }
+
+
+        .logout-form {
+            margin-top: 30px;
+        }
+
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
+
+            margin-left: 250px;
+
+            width: calc(100% - 250px);
+
+            padding: 35px;
+
+            min-height: 100vh;
+        }
+
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 30px;
+
+            gap: 20px;
+        }
+
+
+        .topbar h1 {
+
+            font-size: 28px;
+
+            margin: 0;
+        }
+
+
+        .admin-name {
+
+            background: white;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.05);
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================
+           CONTENT CARD
+        ========================= */
+
+        .content-card {
+
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 2px 10px rgba(0, 0, 0, 0.05);
+
+            width: 100%;
+        }
+
+
+        /* =========================
+           CATEGORY TABLE
+        ========================= */
+
+        .table-responsive {
+
+            width: 100%;
+
+            overflow-x: auto;
+        }
+
+
+        .table {
+
+            width: 100%;
+
+            min-width: 700px;
+
+            margin-bottom: 0;
+        }
+
+
+        .table th {
+
+            color: #6b7280;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            white-space: nowrap;
+        }
+
+
+        .table td {
+
+            vertical-align: middle;
+        }
+
+
+        .table tbody tr:hover {
+
+            background: #f8fafc;
+        }
+
+
+        .category-name {
+
+            font-weight: 600;
+        }
+
+
+        .issue-count {
+
+            display: inline-block;
+
+            background: #dbeafe;
+
+            color: #1d4ed8;
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: 500;
+        }
+
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        .modal-content {
+
+            border: none;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+        }
+
+
+        .modal-header {
+
+            padding: 20px;
+        }
+
+
+        .modal-body {
+
+            padding: 20px;
+        }
+
+
+        .modal-footer {
+
+            padding: 15px 20px;
+        }
+
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .empty-state {
+
+            text-align: center;
+
+            padding: 60px 20px;
+        }
+
+
+        .empty-state h5 {
+
+            margin-bottom: 8px;
+        }
+
+
+        .empty-state p {
+
+            color: #6b7280;
+
+            margin-bottom: 0;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 992px) {
+
+            .sidebar {
+
+                width: 210px;
+            }
+
+
+            .main-content {
+
+                margin-left: 210px;
+
+                width: calc(100% - 210px);
+
+                padding: 25px;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+
+                position: relative;
+
+                width: 100%;
+
+                height: auto;
+            }
+
+
+            .main-content {
+
+                margin-left: 0;
+
+                width: 100%;
+
+                padding: 20px;
+            }
+
+
+            .topbar {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <div class="sidebar">
+
+        <div class="brand">
+            Campus <span>Fix</span>
+        </div>
+
+
+        <div class="menu-title">
+            Main
+        </div>
+
+
+        <a href="{% url 'admin_dashboard' %}">
+            Dashboard
+        </a>
+
+
+        <a href="{% url 'admin_issues' %}">
+            Issues
+        </a>
+
+
+        <a href="{% url 'admin_users' %}">
+            Users
+        </a>
+
+
+        <a href="{% url 'admin_maintenance' %}">
+            Maintenance
+        </a>
+
+
+        <div class="menu-title">
+            Management
+        </div>
+
+
+        <a
+            href="{% url 'admin_categories' %}"
+            class="active"
+        >
+            Categories
+        </a>
+
+
+        <a href="{% url 'admin_locations' %}">
+            Locations
+        </a>
+
+
+        <a href="{% url 'admin_reports' %}">
+            Reports
+        </a>
+
+
+        <form
+            method="POST"
+            action="{% url 'logout' %}"
+            class="logout-form"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-outline-light w-100"
+            >
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <div class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <div class="topbar">
+
+            <div>
+
+                <h1>
+                    Categories
+                </h1>
+
+                <p class="text-muted mb-0">
+                    Manage issue categories
+                </p>
+
+            </div>
+
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="admin-name">
+
+                    👤
+
+                    {{ request.user.first_name }}
+                    {{ request.user.last_name }}
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addCategoryModal"
+                >
+                    + Add Category
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             CATEGORY CONTENT
+        ========================= -->
+
+        <div class="content-card">
+
+
+            <div
+                class="d-flex justify-content-between align-items-center mb-4"
+            >
+
+                <div>
+
+                    <h4 class="mb-1">
+                        All Categories
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        View categories and the number of reported issues
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ categories|length }}
+                    </strong>
+
+                    <span class="text-muted">
+                        categor{{ categories|length|pluralize:"y,ies" }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            {% if categories %}
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Description
+                                </th>
+
+                                <th>
+                                    Reported Issues
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for category in categories %}
+
+                            <tr>
+
+                                <td>
+
+                                    <span class="category-name">
+                                        {{ category.name }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if category.description %}
+
+                                        {{ category.description }}
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            No description
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="issue-count">
+
+                                        {{ category.issues.count }}
+
+                                        issue(s)
+
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <h5>
+                        No Categories Found
+                    </h5>
+
+                    <p>
+                        There are currently no issue categories.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         ADD CATEGORY MODAL
+    ========================= -->
+
+    <div
+        class="modal fade"
+        id="addCategoryModal"
+        tabindex="-1"
+        aria-labelledby="addCategoryModalLabel"
+        aria-hidden="true"
+    >
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+
+                <div class="modal-header">
+
+                    <div>
+
+                        <h5
+                            class="modal-title fw-bold"
+                            id="addCategoryModalLabel"
+                        >
+                            Add New Category
+                        </h5>
+
+                        <p class="text-muted mb-0 small">
+                            Create a new issue category
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+
+                </div>
+
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    <div class="modal-body">
+
+                        {% if form.errors %}
+
+                            <div class="alert alert-danger">
+
+                                Please correct the errors below.
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Category Name
+                            </label>
+
+                            {{ form.name }}
+
+                            {% if form.name.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ form.name.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Description
+                            </label>
+
+                            {{ form.description }}
+
+                            {% if form.description.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ form.description.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="modal-footer">
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Create Category
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- BOOTSTRAP JS -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Campus Fix - Issues</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            margin: 0;
+
+            background: #f5f7fb;
+
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+
+            width: 250px;
+
+            height: 100vh;
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+
+            background: #111827;
+
+            color: white;
+
+            padding: 25px 18px;
+
+            overflow-y: auto;
+        }
+
+
+        .brand {
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            margin-bottom: 35px;
+        }
+
+
+        .brand span {
+
+            color: #4f8cff;
+        }
+
+
+        .menu-title {
+
+            font-size: 12px;
+
+            color: #9ca3af;
+
+            text-transform: uppercase;
+
+            margin: 20px 12px 10px;
+        }
+
+
+        .sidebar a {
+
+            display: block;
+
+            color: #d1d5db;
+
+            text-decoration: none;
+
+            padding: 12px 14px;
+
+            margin-bottom: 5px;
+
+            border-radius: 8px;
+
+            transition: 0.2s;
+        }
+
+
+        .sidebar a:hover {
+
+            background: #1f2937;
+
+            color: white;
+        }
+
+
+        .sidebar .active {
+
+            background: #2563eb;
+
+            color: white;
+        }
+
+
+        .logout-form {
+
+            margin-top: 30px;
+        }
+
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
+
+            margin-left: 250px;
+
+            padding: 35px;
+        }
+
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+
+        .topbar h1 {
+
+            font-size: 28px;
+
+            margin: 0;
+        }
+
+
+        .admin-name {
+
+            background: white;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+
+        /* =========================
+           CONTENT CARD
+        ========================= */
+
+        .content-card {
+
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table {
+
+            margin-bottom: 0;
+        }
+
+
+        .table th {
+
+            color: #6b7280;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            white-space: nowrap;
+        }
+
+
+        .table td {
+
+            vertical-align: middle;
+
+            white-space: nowrap;
+        }
+
+
+        .table tbody tr:hover {
+
+            background: #f8fafc;
+        }
+
+
+        /* =========================
+           BADGES
+        ========================= */
+
+        .badge-custom {
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: 500;
+        }
+
+
+        .priority-low {
+
+            background: #ecfdf5;
+
+            color: #047857;
+        }
+
+
+        .priority-medium {
+
+            background: #fffbeb;
+
+            color: #b45309;
+        }
+
+
+        .priority-high {
+
+            background: #fff7ed;
+
+            color: #c2410c;
+        }
+
+
+        .priority-critical {
+
+            background: #fef2f2;
+
+            color: #b91c1c;
+        }
+
+
+        .status-badge {
+
+            background: #eef2ff;
+
+            color: #3730a3;
+        }
+
+
+        .unassigned {
+
+            color: #dc2626;
+
+            font-weight: 500;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 992px) {
+
+            .sidebar {
+
+                width: 210px;
+            }
+
+
+            .main-content {
+
+                margin-left: 210px;
+
+                padding: 25px;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+
+                position: relative;
+
+                width: 100%;
+
+                height: auto;
+            }
+
+
+            .main-content {
+
+                margin-left: 0;
+
+                padding: 20px;
+            }
+
+
+            .topbar {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <div class="sidebar">
+
+        <div class="brand">
+
+            Campus <span>Fix</span>
+
+        </div>
+
+
+        <div class="menu-title">
+            Main
+        </div>
+
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="{% url 'admin_issues' %}"
+            class="active"
+        >
+            Issues
+        </a>
+
+
+        <a href="{% url 'admin_users' %}">
+            Users
+        </a>
+
+
+        <a href="{% url 'admin_maintenance' %}">
+            Maintenance
+        </a>
+
+
+        <div class="menu-title">
+            Management
+        </div>
+
+
+        <a href="{% url 'admin_categories' %}">
+            Categories
+        </a>
+
+
+        <a href="{% url 'admin_locations' %}">
+            Locations
+        </a>
+
+
+        <a href="{% url 'admin_reports' %}">
+            Reports
+        </a>
+
+
+        <form
+            method="POST"
+            action="{% url 'logout' %}"
+            class="logout-form"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-outline-light w-100"
+            >
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <div class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <div class="topbar">
+
+            <div>
+
+                <h1>
+                    Issues
+                </h1>
+
+                <p class="text-muted mb-0">
+                    Manage and monitor all campus issues
+                </p>
+
+            </div>
+
+
+            <div class="admin-name">
+
+                👤
+
+                {{ request.user.first_name }}
+                {{ request.user.last_name }}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             ISSUES TABLE
+        ========================= -->
+
+        <div class="content-card">
+
+            <div
+                class="d-flex justify-content-between align-items-center mb-4"
+            >
+
+                <div>
+
+                    <h4 class="mb-1">
+                        All Issues
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Every issue reported in Campus Fix
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        {{ issues|length }}
+                    </strong>
+
+                    <span class="text-muted">
+                        issue(s)
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            {% if issues %}
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Ticket
+                                </th>
+
+                                <th>
+                                    Issue
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Location
+                                </th>
+
+                                <th>
+                                    Reporter
+                                </th>
+
+                                <th>
+                                    Priority
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Assigned To
+                                </th>
+
+                                <th>
+                                    Created
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for issue in issues %}
+
+                            <tr>
+
+
+                                <!-- TICKET -->
+
+                                <td>
+
+                                    <strong>
+                                        {{ issue.ticket_id }}
+                                    </strong>
+
+                                </td>
+
+
+
+                                <!-- ISSUE -->
+
+                                <td>
+
+                                    {{ issue.title }}
+
+                                </td>
+
+
+
+                                <!-- CATEGORY -->
+
+                                <td>
+
+                                    {{ issue.category.name }}
+
+                                </td>
+
+
+
+                                <!-- LOCATION -->
+
+                                <td>
+
+                                    {{ issue.location }}
+
+                                </td>
+
+
+
+                                <!-- REPORTER -->
+
+                                <td>
+
+                                    {{ issue.reporter.username }}
+
+                                </td>
+
+
+
+                                <!-- PRIORITY -->
+
+                                <td>
+
+                                    {% if issue.priority == 'low' %}
+
+                                        <span
+                                            class="badge-custom priority-low"
+                                        >
+                                            Low
+                                        </span>
+
+                                    {% elif issue.priority == 'medium' %}
+
+                                        <span
+                                            class="badge-custom priority-medium"
+                                        >
+                                            Medium
+                                        </span>
+
+                                    {% elif issue.priority == 'high' %}
+
+                                        <span
+                                            class="badge-custom priority-high"
+                                        >
+                                            High
+                                        </span>
+
+                                    {% else %}
+
+                                        <span
+                                            class="badge-custom priority-critical"
+                                        >
+                                            Critical
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    <span
+                                        class="badge-custom status-badge"
+                                    >
+                                        {{ issue.get_status_display }}
+                                    </span>
+
+                                </td>
+
+
+
+                                <!-- ASSIGNED TO -->
+
+                                <td>
+
+                                    {% if issue.assigned_to %}
+
+                                        {{ issue.assigned_to.username }}
+
+                                    {% else %}
+
+                                        <span class="unassigned">
+                                            Unassigned
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+
+                                <!-- CREATED -->
+
+                                <td>
+
+                                    {{ issue.created_at|date:"d M Y" }}
+
+                                </td>
+
+
+
+                                <!-- ACTION -->
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'admin_issue_detail' issue.pk %}"
+                                        class="btn btn-sm btn-outline-primary"
+                                    >
+                                        View
+                                    </a>
+
+                                </td>
+
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <h5>
+                        No Issues Found
+                    </h5>
+
+                    <p class="text-muted">
+                        There are currently no reported issues.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

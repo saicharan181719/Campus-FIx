@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ issue.ticket_id }} - Campus Fix
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            background: #111827;
+            color: white;
+
+            padding: 25px 18px;
+
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .brand span {
+            color: #4f8cff;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            color: #9ca3af;
+
+            text-transform: uppercase;
+
+            margin: 20px 12px 10px;
+        }
+
+        .sidebar a {
+            display: block;
+
+            color: #d1d5db;
+            text-decoration: none;
+
+            padding: 12px 14px;
+            margin-bottom: 5px;
+
+            border-radius: 8px;
+
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .sidebar .active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .logout-form {
+            margin-top: 30px;
+        }
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
+            margin-left: 250px;
+            padding: 35px;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .admin-name {
+            background: white;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .content-card {
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* =========================
+           INFORMATION
+        ========================= */
+
+        .info-label {
+            color: #6b7280;
+
+            font-size: 13px;
+
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 15px;
+
+            font-weight: 500;
+
+            color: #111827;
+        }
+
+        .description {
+            background: #f8fafc;
+
+            padding: 18px;
+
+            border-radius: 8px;
+
+            line-height: 1.6;
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status-badge {
+            display: inline-block;
+
+            padding: 7px 13px;
+
+            border-radius: 20px;
+
+            background: #eef2ff;
+
+            color: #3730a3;
+
+            font-size: 13px;
+
+            font-weight: 500;
+        }
+
+        /* =========================
+           HISTORY
+        ========================= */
+
+        .history-item {
+            position: relative;
+
+            border-left: 3px solid #2563eb;
+
+            padding: 15px 18px;
+
+            margin-bottom: 15px;
+
+            background: #f8fafc;
+
+            border-radius: 0 8px 8px 0;
+        }
+
+        .history-status {
+            font-weight: 600;
+
+            color: #111827;
+
+            margin-bottom: 5px;
+        }
+
+        .history-comment {
+            color: #4b5563;
+
+            margin-bottom: 8px;
+        }
+
+        .history-meta {
+            color: #6b7280;
+
+            font-size: 12px;
+        }
+
+        /* =========================
+           IMAGE
+        ========================= */
+
+        .evidence-image {
+            max-width: 100%;
+
+            max-height: 450px;
+
+            border-radius: 10px;
+
+            object-fit: contain;
+
+            border: 1px solid #e5e7eb;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                position: relative;
+
+                width: 100%;
+
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <div class="sidebar">
+
+        <div class="brand">
+            Campus <span>Fix</span>
+        </div>
+
+
+        <div class="menu-title">
+            Main
+        </div>
+
+
+        <a href="{% url 'admin_dashboard' %}">
+            Dashboard
+        </a>
+
+
+        <a
+            href="{% url 'admin_issues' %}"
+            class="active"
+        >
+            Issues
+        </a>
+
+
+        <a href="#">
+            Users
+        </a>
+
+
+        <a href="#">
+            Maintenance
+        </a>
+
+
+        <div class="menu-title">
+            Management
+        </div>
+
+
+        <a href="#">
+            Categories
+        </a>
+
+
+        <a href="#">
+            Locations
+        </a>
+
+
+        <a href="#">
+            Reports
+        </a>
+
+
+        <form
+            method="POST"
+            action="{% url 'logout' %}"
+            class="logout-form"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-outline-light w-100"
+            >
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <div class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <div class="topbar">
+
+            <div>
+
+                <h1>
+                    Issue Details
+                </h1>
+
+                <p class="text-muted mb-0">
+                    {{ issue.ticket_id }}
+                </p>
+
+            </div>
+
+
+            <div class="admin-name">
+
+                👤
+
+                {{ request.user.first_name }}
+                {{ request.user.last_name }}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             ISSUE OVERVIEW
+        ========================= -->
+
+        <div class="content-card">
+
+            <div
+                class="d-flex justify-content-between align-items-start mb-4"
+            >
+
+                <div>
+
+                    <h3>
+                        {{ issue.title }}
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        Ticket ID:
+                        <strong>
+                            {{ issue.ticket_id }}
+                        </strong>
+                    </p>
+
+                </div>
+
+
+                <span class="status-badge">
+
+                    {{ issue.get_status_display }}
+
+                </span>
+
+            </div>
+
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="mb-4">
+
+                <div class="info-label">
+                    Description
+                </div>
+
+                <div class="description">
+
+                    {{ issue.description }}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- INFORMATION GRID -->
+
+            <div class="row g-4">
+
+
+                <div class="col-md-4">
+
+                    <div class="info-label">
+                        Category
+                    </div>
+
+                    <div class="info-value">
+                        {{ issue.category.name }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="info-label">
+                        Location
+                    </div>
+
+                    <div class="info-value">
+                        {{ issue.location }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="info-label">
+                        Priority
+                    </div>
+
+                    <div class="info-value">
+                        {{ issue.get_priority_display }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="info-label">
+                        Reported By
+                    </div>
+
+                    <div class="info-value">
+                        {{ issue.reporter.username }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="info-label">
+                        Assigned To
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if issue.assigned_to %}
+
+                            {{ issue.assigned_to.username }}
+
+                        {% else %}
+
+                            <span class="text-danger">
+                                Unassigned
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="info-label">
+                        Created
+                    </div>
+
+                    <div class="info-value">
+                        {{ issue.created_at }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="info-label">
+                        Last Updated
+                    </div>
+
+                    <div class="info-value">
+                        {{ issue.updated_at }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             EVIDENCE IMAGE
+        ========================= -->
+
+        {% if issue.image %}
+
+        <div class="content-card">
+
+            <h4 class="mb-3">
+                Evidence Image
+            </h4>
+
+            <img
+                src="{{ issue.image.url }}"
+                alt="Issue evidence"
+                class="evidence-image"
+            >
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Admin Actions -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">
+            Admin Actions
+        </h5>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                        Status
+                    </label>
+
+                    {{ form.status }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                        Assigned To
+                    </label>
+
+                    {{ form.assigned_to }}
+                </div>
+
+            </div>
+
+            <div class="mt-3">
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+        <!-- =========================
+             STATUS HISTORY
+        ========================= -->
+
+        <div class="content-card">
+
+            <h4 class="mb-4">
+                Status History
+            </h4>
+
+
+            {% if updates %}
+
+                {% for update in updates %}
+
+                <div class="history-item">
+
+                    <div class="history-status">
+
+                        {{ update.get_status_display }}
+
+                    </div>
+
+
+                    {% if update.comment %}
+
+                    <div class="history-comment">
+
+                        {{ update.comment }}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="history-meta">
+
+                        Updated by:
+
+                        {% if update.updated_by %}
+
+                            {{ update.updated_by.username }}
+
+                        {% else %}
+
+                            System
+
+                        {% endif %}
+
+                        &nbsp; • &nbsp;
+
+                        {{ update.created_at }}
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+
+            {% else %}
+
+                <p class="text-muted">
+
+                    No status history available.
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- =========================
+             BACK BUTTON
+        ========================= -->
+
+        <div class="mb-4">
+
+            <a
+                href="{% url 'admin_issues' %}"
+                class="btn btn-outline-secondary"
+            >
+                ← Back to Issues
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

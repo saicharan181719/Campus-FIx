@@ -62,14 +62,45 @@
 
 <body>
 
+<body>
+
 <div class="container">
 
-    <h1>Maintenance Dashboard</h1>
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    ">
 
-    <p class="subtitle">
-        Issues assigned to {{ request.user.username }}
-    </p>
+        <div>
+            <h1>Maintenance Dashboard</h1>
 
+            <p class="subtitle" style="margin-bottom: 0;">
+                Issues assigned to {{ request.user.username }}
+            </p>
+        </div>
+
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                style="
+                    background: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 10px 18px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 14px;
+                "
+            >
+                Logout
+            </button>
+        </form>
+
+    </div>
     {% if issues %}
 
         {% for issue in issues %}

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Campus Fix - Admin Dashboard</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            background: #111827;
+            color: white;
+
+            padding: 25px 18px;
+
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .brand span {
+            color: #4f8cff;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            color: #9ca3af;
+
+            text-transform: uppercase;
+
+            margin: 20px 12px 10px;
+        }
+
+        .sidebar a {
+            display: block;
+
+            color: #d1d5db;
+            text-decoration: none;
+
+            padding: 12px 14px;
+            margin-bottom: 5px;
+
+            border-radius: 8px;
+
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .sidebar .active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .logout-form {
+            margin-top: 30px;
+        }
+
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
+            margin-left: 250px;
+            padding: 35px;
+        }
+
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .admin-name {
+            background: white;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+
+        /* =========================
+           STATISTICS CARDS
+        ========================= */
+
+        .stat-card {
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 22px;
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+            height: 100%;
+
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-title {
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+        .stat-number {
+            font-size: 30px;
+
+            font-weight: bold;
+
+            margin-top: 8px;
+
+            color: #111827;
+        }
+
+
+        /* =========================
+           CONTENT CARDS
+        ========================= */
+
+        .content-card {
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            margin-top: 30px;
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table th {
+            color: #6b7280;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+
+        /* =========================
+           STATUS / PRIORITY
+        ========================= */
+
+        .status-badge {
+            display: inline-block;
+
+            padding: 5px 10px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            background: #eef2ff;
+
+            color: #3730a3;
+        }
+
+        .unassigned {
+            color: #dc2626;
+
+            font-weight: 500;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 992px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main-content {
+                margin-left: 210px;
+                padding: 25px;
+            }
+
+        }
+
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                position: relative;
+
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <div class="sidebar">
+
+        <div class="brand">
+            Campus <span>Fix</span>
+        </div>
+
+
+        <div class="menu-title">
+            Main
+        </div>
+
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="active"
+        >
+            Dashboard
+        </a>
+
+
+        <a href="{% url 'admin_issues' %}">
+            Issues
+        </a>
+
+
+        <a href="{% url 'admin_users' %}">
+            Users
+        </a>
+
+
+        <a href="{% url 'admin_maintenance' %}">
+            Maintenance
+        </a>
+
+
+        <div class="menu-title">
+            Management
+        </div>
+
+
+        <a href="{% url 'admin_categories' %}">
+            Categories
+        </a>
+
+
+        <a href="{% url 'admin_locations' %}">
+            Locations
+        </a>
+
+
+        <a href="{% url 'admin_reports' %}">
+            Reports
+        </a>
+
+
+        <form
+            method="POST"
+            action="{% url 'logout' %}"
+            class="logout-form"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-outline-light w-100"
+            >
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <div class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <div class="topbar">
+
+            <div>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p class="text-muted mb-0">
+                    Campus Fix administration overview
+                </p>
+
+            </div>
+
+
+            <div class="admin-name">
+
+                👤
+
+                {{ request.user.first_name }}
+                {{ request.user.last_name }}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             STATISTICS
+        ========================= -->
+
+        <div class="row g-4">
+
+
+            <!-- TOTAL ISSUES -->
+
+            <div class="col-md-4 col-lg-2">
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Total Issues
+                    </div>
+
+                    <div class="stat-number">
+                        {{ total_issues }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- OPEN ISSUES -->
+
+            <div class="col-md-4 col-lg-2">
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Open Issues
+                    </div>
+
+                    <div class="stat-number">
+                        {{ open_issues }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- IN PROGRESS -->
+
+            <div class="col-md-4 col-lg-2">
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        In Progress
+                    </div>
+
+                    <div class="stat-number">
+                        {{ in_progress_issues }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RESOLVED -->
+
+            <div class="col-md-4 col-lg-2">
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Resolved
+                    </div>
+
+                    <div class="stat-number">
+                        {{ resolved_issues }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CLOSED -->
+
+            <div class="col-md-4 col-lg-2">
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Closed
+                    </div>
+
+                    <div class="stat-number">
+                        {{ closed_issues }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- UNASSIGNED -->
+
+            <div class="col-md-4 col-lg-2">
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Unassigned
+                    </div>
+
+                    <div class="stat-number">
+                        {{ unassigned_issues }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             RECENT ISSUES
+        ========================= -->
+
+        <div class="content-card">
+
+
+            <div
+                class="d-flex justify-content-between align-items-center mb-3"
+            >
+
+                <div>
+
+                    <h4 class="mb-1">
+                        Recent Issues
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Latest issues reported on campus
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="{% url 'admin_issues' %}"
+                    class="btn btn-primary"
+                >
+                    View All
+                </a>
+
+            </div>
+
+
+
+            {% if recent_issues %}
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Ticket
+                                </th>
+
+                                <th>
+                                    Issue
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Priority
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Assigned To
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for issue in recent_issues %}
+
+                            <tr>
+
+
+                                <!-- TICKET -->
+
+                                <td>
+
+                                    <strong>
+                                        {{ issue.ticket_id }}
+                                    </strong>
+
+                                </td>
+
+
+
+                                <!-- ISSUE -->
+
+                                <td>
+
+                                    {{ issue.title }}
+
+                                </td>
+
+
+
+                                <!-- CATEGORY -->
+
+                                <td>
+
+                                    {{ issue.category.name }}
+
+                                </td>
+
+
+
+                                <!-- PRIORITY -->
+
+                                <td>
+
+                                    {{ issue.get_priority_display }}
+
+                                </td>
+
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    <span class="status-badge">
+
+                                        {{ issue.get_status_display }}
+
+                                    </span>
+
+                                </td>
+
+
+
+                                <!-- ASSIGNED USER -->
+
+                                <td>
+
+                                    {% if issue.assigned_to %}
+
+                                        {{ issue.assigned_to.username }}
+
+                                    {% else %}
+
+                                        <span class="unassigned">
+
+                                            Unassigned
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            {% else %}
+
+                <p class="text-muted">
+
+                    No issues have been reported yet.
+
+                </p>
+
+            {% endif %}
+
+
+        </div>
+
+
+
+        <!-- =========================
+             QUICK ACTIONS
+        ========================= -->
+
+        <div class="content-card">
+
+    <h4>
+        Quick Actions
+    </h4>
+
+
+    <div class="mt-3">
+
+        <a
+            href="{% url 'admin_issues' %}"
+            class="btn btn-primary me-2"
+        >
+            Manage Issues
+        </a>
+
+
+        <a
+            href="{% url 'admin_users' %}"
+            class="btn btn-secondary me-2"
+        >
+            Manage Users
+        </a>
+
+
+        <a
+            href="{% url 'admin_maintenance' %}"
+            class="btn btn-outline-dark me-2"
+        >
+            Manage Maintenance
+        </a>
+
+
+        <a
+            href="{% url 'admin_categories' %}"
+            class="btn btn-outline-primary me-2"
+        >
+            Manage Categories
+        </a>
+
+
+        <a
+            href="{% url 'admin_locations' %}"
+            class="btn btn-outline-success me-2"
+        >
+            Manage Locations
+        </a>
+
+
+        <a
+            href="{% url 'admin_reports' %}"
+            class="btn btn-outline-dark"
+        >
+            View Reports
+        </a>
+
+    </div>
+
+</div>
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

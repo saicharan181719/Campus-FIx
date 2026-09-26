@@ -24,12 +24,36 @@
                 <div class="card-body p-4">
 
                     <h2 class="text-center mb-4">
-                        Campus Fix
-                    </h2>
+    Campus Fix
+</h2>
 
-                    <p class="text-center text-muted">
-                        Login to your account
-                    </p>
+{% if portal == 'student' %}
+    <h4 class="text-center mb-2">
+        Student Login
+    </h4>
+
+    <p class="text-center text-muted">
+        Login to report and track campus issues.
+    </p>
+
+{% elif portal == 'maintenance' %}
+    <h4 class="text-center mb-2">
+        Maintenance Login
+    </h4>
+
+    <p class="text-center text-muted">
+        Login to manage your assigned issues.
+    </p>
+
+{% elif portal == 'admin' %}
+    <h4 class="text-center mb-2">
+        Administrator Login
+    </h4>
+
+    <p class="text-center text-muted">
+        Login to access the Campus Fix administration dashboard.
+    </p>
+{% endif %}
 
                     {% if form.errors %}
                         <div class="alert alert-danger">
@@ -40,6 +64,8 @@
                     <form method="POST">
 
                         {% csrf_token %}
+
+                        <input type="hidden" name="portal" value="{{ portal }}">
 
                         <div class="mb-3">
                             <label class="form-label">
@@ -70,12 +96,14 @@
 
                     <div class="text-center mt-3">
 
-                        <p>
-                            Don't have an account?
-                            <a href="{% url 'register' %}">
-                                Register
-                            </a>
-                        </p>
+                        {% if portal == 'student' %}
+    <div class="text-center mt-3">
+        <p>
+            Don't have an account?
+            <a href="{% url 'register' %}">Register</a>
+        </p>
+    </div>
+{% endif %}
 
                     </div>
 
