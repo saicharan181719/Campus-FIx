@@ -130,9 +130,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+MEDIA_URL = '/media/'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": os.getenv("SUPABASE_S3_ACCESS_KEY_ID"),
+            "secret_key": os.getenv("SUPABASE_S3_SECRET_ACCESS_KEY"),
+            "bucket_name": "issue-images",
+            "endpoint_url": os.getenv("SUPABASE_S3_ENDPOINT"),
+            "region_name": os.getenv("SUPABASE_S3_REGION"),
+            "addressing_style": "path",
+            "querystring_auth": False,
+            "file_overwrite": False,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
-MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
