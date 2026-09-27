@@ -30,6 +30,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
+SUPABASE_PUBLIC_URL = os.getenv('SUPABASE_PUBLIC_URL')
+
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -135,7 +137,7 @@ MEDIA_URL = '/media/'
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "BACKEND": "issues.storage.SupabaseStorage",
         "OPTIONS": {
             "access_key": os.getenv("SUPABASE_S3_ACCESS_KEY_ID"),
             "secret_key": os.getenv("SUPABASE_S3_SECRET_ACCESS_KEY"),
