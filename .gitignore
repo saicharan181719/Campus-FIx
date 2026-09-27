@@ -28,3 +28,9 @@ local_settings.py
 # OS files
 .DS_Store
 Thumbs.db
+
+old_data.json
+old_data_utf8.json
+old_data_clean.json
+
+*.sql
