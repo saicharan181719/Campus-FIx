@@ -88,4 +88,4 @@ class UserLoginView(LoginView):
 
 
 class UserLogoutView(LogoutView):
-    next_page = 'login'
+    next_page = '/'
