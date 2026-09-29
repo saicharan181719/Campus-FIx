@@ -41,7 +41,12 @@ class UserLoginView(LoginView):
             or 'student'
         )
 
-        if portal not in ['student', 'maintenance', 'admin']:
+        if portal not in [
+            'student',
+            'faculty',
+            'maintenance',
+            'admin'
+        ]:
             portal = 'student'
 
         context['portal'] = portal
@@ -53,6 +58,7 @@ class UserLoginView(LoginView):
 
         role_map = {
             'student': 'student',
+            'faculty': 'faculty',
             'maintenance': 'maintenance',
             'admin': 'admin',
         }
@@ -83,6 +89,9 @@ class UserLoginView(LoginView):
 
         elif user.role == 'maintenance':
             return '/maintenance/'
+
+        elif user.role == 'faculty':
+            return '/faculty/'
 
         return '/student/'
 

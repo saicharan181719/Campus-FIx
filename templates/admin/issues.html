@@ -470,7 +470,210 @@
         <!-- =========================
              ISSUES TABLE
         ========================= -->
+<!-- FILTERS -->
 
+<div class="content-card mb-4">
+
+    <h5 class="mb-3">
+        Search & Filter Issues
+    </h5>
+
+    <form method="GET">
+
+        <div class="row g-3">
+
+            <!-- SEARCH -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Search
+                </label>
+
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search ticket, title or description"
+                    value="{{ search }}"
+                >
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Status
+                </label>
+
+                <select
+                    name="status"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    {% for value, label in status_choices %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if selected_status == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- PRIORITY -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Priority
+                </label>
+
+                <select
+                    name="priority"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Priorities
+                    </option>
+
+                    {% for value, label in priority_choices %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if selected_priority == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- CATEGORY -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Category
+                </label>
+
+                <select
+                    name="category"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    {% for category in categories %}
+
+                        <option
+                            value="{{ category.id }}"
+                            {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}
+                        >
+                            {{ category.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Location
+                </label>
+
+                <select
+                    name="location"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Locations
+                    </option>
+
+                    {% for location in locations %}
+
+                        <option
+                            value="{{ location.id }}"
+                            {% if selected_location == location.id|stringformat:"s" %}selected{% endif %}
+                        >
+                            {{ location }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    name="date"
+                    class="form-control"
+                    value="{{ selected_date }}"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="mt-3">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Apply Filters
+            </button>
+
+            <a
+                href="{% url 'admin_issues' %}"
+                class="btn btn-outline-secondary ms-2"
+            >
+                Clear Filters
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
         <div class="content-card">
 
             <div

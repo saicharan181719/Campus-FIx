@@ -5,6 +5,7 @@ from .views import (
     issue_list,
     report_issue,
     maintenance_dashboard,
+    student_verify_issue,
     maintenance_update_issue,
     admin_dashboard,
     admin_issues,
@@ -14,6 +15,8 @@ from .views import (
     admin_categories,
     admin_locations,
     admin_reports,
+    faculty_dashboard,
+    faculty_issue_detail,
 )
 
 
@@ -94,5 +97,15 @@ path(
     admin_reports,
     name='admin_reports'
 ),
+
+path(
+    'issue/<int:pk>/verify/',
+    student_verify_issue,
+    name='student_verify_issue'
+),
+
+path('faculty/', faculty_dashboard, name='faculty_dashboard'),
+
+path('faculty/issue/<int:pk>/', faculty_issue_detail, name='faculty_issue_detail'),
 
 ]

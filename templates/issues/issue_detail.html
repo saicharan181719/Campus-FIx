@@ -178,51 +178,145 @@
                             >
 
                         </div>
+
+                    {% endif %}
+
+
+                    {% if issue.resolution_notes %}
+
                         <hr>
 
-<h2>Status History</h2>
+                        <div class="mt-4">
 
-{% if updates %}
+                            <h5>
+                                Resolution Details
+                            </h5>
 
-    {% for update in updates %}
+                            <p>
+                                <strong>Resolution Notes:</strong><br>
+                                {{ issue.resolution_notes }}
+                            </p>
 
-        <div style="
-            background: #f8f9fa;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-        ">
+                        </div>
 
-            <strong>
-                {{ update.get_status_display }}
-            </strong>
+                    {% endif %}
 
-            <p>
-                {{ update.comment }}
-            </p>
 
-            <small style="color: #666;">
-                Updated by:
-                {% if update.updated_by %}
-                    {{ update.updated_by.username }}
-                {% else %}
-                    System
-                {% endif %}
+                    {% if issue.resolution_image %}
 
-                <br>
+                        <div class="mt-3">
 
-                {{ update.created_at }}
-            </small>
+                            <h5>
+                                Resolution Image
+                            </h5>
 
-        </div>
+                            <img
+                                src="{{ issue.resolution_image.url }}"
+                                alt="Resolution evidence"
+                                class="img-fluid rounded"
+                                style="max-width: 600px;"
+                            >
 
-    {% endfor %}
+                        </div>
 
-{% else %}
+                    {% endif %}
 
-    <p>No status history available.</p>
 
-{% endif %}
+                    <hr>
+
+
+                    <h5 class="mt-4">
+                        Status History
+                    </h5>
+
+
+                    {% if updates %}
+
+                        {% for update in updates %}
+
+                            <div
+                                class="bg-light p-3 mb-2 rounded"
+                            >
+
+                                <strong>
+                                    {{ update.get_status_display }}
+                                </strong>
+
+                                <p class="mb-1">
+                                    {{ update.comment }}
+                                </p>
+
+                                <small class="text-muted">
+
+                                    Updated by:
+
+                                    {% if update.updated_by %}
+
+                                        {{ update.updated_by.username }}
+
+                                    {% else %}
+
+                                        System
+
+                                    {% endif %}
+
+                                    <br>
+
+                                    {{ update.created_at }}
+
+                                </small>
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <p class="text-muted">
+                            No status history available.
+                        </p>
+
+                    {% endif %}
+
+
+                    {% if request.user.role == 'student' and issue.status == 'resolved' %}
+
+                        <div class="mt-4">
+
+                            <div class="alert alert-warning">
+
+                                <strong>Action Required</strong>
+
+                                <br>
+
+                                The maintenance team has marked this issue as resolved.
+                                Please verify whether the issue has actually been fixed.
+
+                            </div>
+
+                            <a
+                                href="{% url 'student_verify_issue' issue.pk %}"
+                                class="btn btn-success"
+                            >
+                                Verify Resolution
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if issue.status == 'closed' and issue.student_verified %}
+
+                        <div class="alert alert-success mt-4">
+
+                            <strong>Issue Verified</strong>
+
+                            <br>
+
+                            You confirmed that this issue has been successfully resolved.
+
+                        </div>
 
                     {% endif %}
 

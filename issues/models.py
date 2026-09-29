@@ -112,6 +112,31 @@ class Issue(models.Model):
         null=True
     )
 
+    resolution_notes = models.TextField(
+    blank=True,
+    null=True
+    )
+
+    resolution_image = models.ImageField(
+    upload_to='resolution_images/',
+    blank=True,
+    null=True
+    )
+
+    student_verified = models.BooleanField(
+    default=False
+    )
+
+    student_feedback = models.TextField(
+    blank=True,
+    null=True
+    )
+
+    student_rating = models.PositiveSmallIntegerField(
+    blank=True,
+    null=True
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )
@@ -197,3 +222,4 @@ class IssueUpdate(models.Model):
 
     def __str__(self):
         return f"{self.issue.ticket_id} - {self.status}"
+

@@ -29,19 +29,30 @@
             margin-bottom: 25px;
         }
 
+        .form-group {
+            margin-bottom: 20px;
+        }
+
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
         }
 
-        select {
+        select,
+        textarea,
+        input[type="file"] {
             width: 100%;
             padding: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
             border: 1px solid #ccc;
             border-radius: 6px;
             font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
         }
 
         button {
@@ -64,6 +75,12 @@
             text-decoration: none;
             color: #555;
         }
+
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -84,16 +101,45 @@
         {{ issue.get_status_display }}
     </p>
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
 
         {% csrf_token %}
 
-        {{ form.status.label_tag }}
+        <div class="form-group">
+            {{ form.status.label_tag }}
+            {{ form.status }}
 
-        {{ form.status }}
+            {% if form.status.errors %}
+                <div class="error">
+                    {{ form.status.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.resolution_notes.label_tag }}
+            {{ form.resolution_notes }}
+
+            {% if form.resolution_notes.errors %}
+                <div class="error">
+                    {{ form.resolution_notes.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.resolution_image.label_tag }}
+            {{ form.resolution_image }}
+
+            {% if form.resolution_image.errors %}
+                <div class="error">
+                    {{ form.resolution_image.errors }}
+                </div>
+            {% endif %}
+        </div>
 
         <button type="submit">
-            Update Status
+            Update Issue
         </button>
 
         <a

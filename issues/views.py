@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.models import User
 
-from .forms import IssueForm, IssueUpdateForm, AdminIssueUpdateForm, CategoryForm, LocationForm
+from .forms import IssueForm, IssueUpdateForm, StudentVerificationForm, AdminIssueUpdateForm, CategoryForm, LocationForm
 from .models import Issue, IssueUpdate, Category, Location
 from accounts.forms import AdminUserForm
 from django.db.models import Count, Q
@@ -123,6 +123,59 @@ def issue_detail(request, pk):
     )
 
 @login_required
+def student_verify_issue(request, pk):
+    if request.user.role != 'student':
+        return redirect('issue_list')
+
+    issue = get_object_or_404(
+        Issue,
+        pk=pk,
+        reporter=request.user
+    )
+
+    # Student can verify only resolved issues
+    if issue.status != 'resolved':
+        return redirect('issue_detail', pk=pk)
+
+    if request.method == 'POST':
+        form = StudentVerificationForm(request.POST, instance=issue)
+
+        if form.is_valid():
+            issue = form.save(commit=False)
+
+            if issue.student_verified:
+                issue.status = 'closed'
+            else:
+                issue.status = 'reopened'
+
+            issue.save()
+
+            IssueUpdate.objects.create(
+                issue=issue,
+                updated_by=request.user,
+                status=issue.status,
+                comment=(
+                    'Student confirmed the issue is resolved.'
+                    if issue.student_verified
+                    else 'Student reported that the issue is not fixed and requested reopening.'
+                )
+            )
+
+            return redirect('issue_detail', pk=issue.pk)
+
+    else:
+        form = StudentVerificationForm(instance=issue)
+
+    return render(
+        request,
+        'issues/student_verify.html',
+        {
+            'issue': issue,
+            'form': form,
+        }
+    )
+
+@login_required
 def maintenance_dashboard(request):
     if request.user.role != 'maintenance':
         return redirect('issue_list')
@@ -149,7 +202,7 @@ def maintenance_update_issue(request, pk):
     )
 
     if request.method == 'POST':
-        form = IssueUpdateForm(request.POST, instance=issue)
+        form = IssueUpdateForm(request.POST, request.FILES, instance=issue)
 
         if form.is_valid():
 
@@ -245,11 +298,65 @@ def admin_issues(request):
         'assigned_to'
     ).order_by('-created_at')
 
+    # Search
+    search = request.GET.get('search', '').strip()
+
+    if search:
+        from django.db.models import Q
+
+        issues = issues.filter(
+            Q(ticket_id__icontains=search) |
+            Q(title__icontains=search) |
+            Q(description__icontains=search)
+        )
+
+    # Status filter
+    status = request.GET.get('status', '').strip()
+
+    if status:
+        issues = issues.filter(status=status)
+
+    # Category filter
+    category = request.GET.get('category', '').strip()
+
+    if category:
+        issues = issues.filter(category_id=category)
+
+    # Priority filter
+    priority = request.GET.get('priority', '').strip()
+
+    if priority:
+        issues = issues.filter(priority=priority)
+
+    # Location filter
+    location = request.GET.get('location', '').strip()
+
+    if location:
+        issues = issues.filter(location_id=location)
+
+    # Date filter
+    date = request.GET.get('date', '').strip()
+
+    if date:
+        issues = issues.filter(created_at__date=date)
+
     return render(
         request,
         'admin/issues.html',
         {
             'issues': issues,
+            'categories': Category.objects.all(),
+            'locations': Location.objects.all(),
+            'status_choices': Issue.STATUS_CHOICES,
+            'priority_choices': Issue.PRIORITY_CHOICES,
+
+            # Keep filter values selected after searching
+            'search': search,
+            'selected_status': status,
+            'selected_category': category,
+            'selected_priority': priority,
+            'selected_location': location,
+            'selected_date': date,
         }
     )
 @login_required
@@ -564,4 +671,52 @@ def admin_reports(request):
         request,
         'admin/reports.html',
         context
+    )
+
+@login_required
+def faculty_dashboard(request):
+    if request.user.role != 'faculty':
+        return redirect('issue_list')
+
+    issues = Issue.objects.select_related(
+        'category',
+        'location',
+        'reporter',
+        'assigned_to'
+    ).order_by('-created_at')
+
+    return render(
+        request,
+        'faculty/dashboard.html',
+        {
+            'issues': issues,
+        }
+    )
+
+@login_required
+def faculty_issue_detail(request, pk):
+    if request.user.role != 'faculty':
+        return redirect('issue_list')
+
+    issue = get_object_or_404(
+        Issue.objects.select_related(
+            'category',
+            'location',
+            'reporter',
+            'assigned_to'
+        ),
+        pk=pk
+    )
+
+    updates = issue.updates.select_related(
+        'updated_by'
+    ).order_by('created_at')
+
+    return render(
+        request,
+        'faculty/issue_detail.html',
+        {
+            'issue': issue,
+            'updates': updates,
+        }
     )

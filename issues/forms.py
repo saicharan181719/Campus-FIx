@@ -42,11 +42,55 @@ class IssueForm(forms.ModelForm):
 class IssueUpdateForm(forms.ModelForm):
     class Meta:
         model = Issue
-        fields = ['status']
+        fields = [
+            'status',
+            'resolution_notes',
+            'resolution_image',
+        ]
+
         widgets = {
-            'status': forms.Select(attrs={
-                'class': 'form-select'
-            }),
+            'status': forms.Select(
+                attrs={'class': 'form-select'}
+            ),
+            'resolution_notes': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'rows': 4,
+                    'placeholder': 'Describe the work completed and how the issue was resolved...'
+                }
+            ),
+            'resolution_image': forms.ClearableFileInput(
+                attrs={'class': 'form-control'}
+            ),
+        }
+
+class StudentVerificationForm(forms.ModelForm):
+    class Meta:
+        model = Issue
+        fields = [
+            'student_verified',
+            'student_rating',
+            'student_feedback',
+        ]
+        widgets = {
+            'student_verified': forms.CheckboxInput(
+                attrs={'class': 'form-check-input'}
+            ),
+            'student_rating': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'min': 1,
+                    'max': 5,
+                    'placeholder': 'Rate the resolution from 1 to 5'
+                }
+            ),
+            'student_feedback': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'rows': 4,
+                    'placeholder': 'Share your feedback about the resolution...'
+                }
+            ),
         }
 
 
